@@ -1,6 +1,6 @@
 .venv/
+.idea/
 __pycache__/
 *.pyc
 .DS_Store
-.idea/
 outputs/benchmark_results.csv
