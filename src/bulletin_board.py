@@ -1,5 +1,7 @@
 # src/bulletin_board.py
 from typing import Optional
+from copy import deepcopy
+
 from src.crypto_utils import serialize, hash_sha256_hex
 from src.merkle_tree import MerkleTree, verify_proof
 
@@ -54,20 +56,23 @@ class BulletinBoard:
         return len(self.entries) - 1
 
     def get_entry(self, index: int) -> dict:
-        """Restituisce una voce del Bulletin Board dato il suo indice."""
+        """
+        Restituisce una copia di una voce del Bulletin Board con il suo indice.
+        La copia evita che codice esterno possa modificare direttamente il registro interno, preservando il comportamento append-only
+        """
         if index < 0 or index >= len(self.entries):
             raise IndexError("Indice della voce non valido.")
 
-        return self.entries[index]
+        return deepcopy(self.entries[index])
 
     def get_entries(self) -> list[dict]:
         """
-        Restituisce tutte le voci pubbliche del Bulletin Board.
+        Restituisce una copia di tutte le voci pubbliche del Bulletin Board.
 
         Viene restituita una copia della lista per evitare modifiche dirette
         alla struttura interna del registro.
         """
-        return list(self.entries)
+        return deepcopy(self.entries)
 
     # ──────────────────────────────────────────────
     # SERIALIZZAZIONE E HASH DELLE VOCI
@@ -137,5 +142,18 @@ class BulletinBoard:
         entry_bytes = self.serialize_entry(index)
         proof = self.get_proof(index)
         root = self.get_merkle_root()
+
+        return verify_proof(entry_bytes, index, proof, root)
+
+    def verify_entry_inclusion_against_root(self, index: int, root: bytes) -> bool:
+        """
+        Verifica che una voce sia inclusa rispetto a una Merkle root specifica.
+
+        Questo metodo è utile dopo la chiusura delle urne, quando l'AE pubblica
+        una root_B firmata. L'elettore può così verificare la propria scheda
+        rispetto alla root ufficiale, e non solo rispetto alla root corrente.
+        """
+        entry_bytes = self.serialize_entry(index)
+        proof = self.get_proof(index)
 
         return verify_proof(entry_bytes, index, proof, root)
