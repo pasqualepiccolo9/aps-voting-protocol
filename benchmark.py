@@ -289,7 +289,7 @@ def benchmark_protocol_operations(results: list[dict]) -> None:
 
     add_result(
         results,
-        "Sottomissione completa scheda",
+        "Invio completo della scheda",
         repetitions,
         mean_ms,
         std_ms,
@@ -338,6 +338,148 @@ def benchmark_protocol_operations(results: list[dict]) -> None:
         "Decifrazione e conteggio schede"
     )
 
+def benchmark_university_scenario(results: list[dict]) -> None:
+    """
+    Misura uno scenario universitario realistico con 28.000 schede.
+
+    La misura è ottimizzata: non vengono generati 28.000 elettori
+    e quindi non vengono generate 28.000 coppie di chiavi RSA.
+    L'obiettivo è misurare le operazioni che crescono con il numero
+    di voti effettivamente pubblicati e scrutinati.
+    """
+    number_of_votes = 28000
+    candidates = ["Candidato A", "Candidato B", "Candidato C"]
+
+    bulletin_board = BulletinBoard()
+    auth_server = AuthServer()
+    electoral_authority = ElectoralAuthority(
+        auth_server_public_key=auth_server.get_public_key(),
+        bulletin_board=bulletin_board
+    )
+
+    # ──────────────────────────────────────────────
+    # CIFRATURA DI 28.000 VOTI
+    # ──────────────────────────────────────────────
+
+    ciphertexts = []
+
+    start = time.perf_counter()
+
+    for i in range(number_of_votes):
+        vote = candidates[i % len(candidates)]
+        ciphertext = encrypt_oaep(
+            electoral_authority.get_encryption_public_key(),
+            vote.encode("utf-8")
+        )
+        ciphertexts.append(ciphertext)
+
+    end = time.perf_counter()
+
+    add_result(
+        results,
+        "Scenario universitario: cifratura 28000 voti",
+        1,
+        (end - start) * 1000,
+        0.0,
+        sum(len(ct) for ct in ciphertexts),
+        "Cifratura RSA-OAEP di tutte le schede"
+    )
+
+    # ──────────────────────────────────────────────
+    # PUBBLICAZIONE DI 28.000 SCHEDE NEL BULLETIN BOARD
+    # ──────────────────────────────────────────────
+
+    start = time.perf_counter()
+
+    for i, ciphertext in enumerate(ciphertexts):
+        ballot_id = f"ballot_{i:05d}"
+        ciphertext_hex = ciphertext.hex()
+
+        message = ballot_id.encode("utf-8") + hash_sha256(ciphertext)
+        ae_signature = sign(
+            electoral_authority.signing_private_key,
+            message
+        ).hex()
+
+        entry = {
+            "id": ballot_id,
+            "ciphertext": ciphertext_hex,
+            "signature": ae_signature
+        }
+
+        bulletin_board.add_entry(entry)
+
+    end = time.perf_counter()
+
+    add_result(
+        results,
+        "Scenario universitario: pubblicazione 28000 schede",
+        1,
+        (end - start) * 1000,
+        0.0,
+        0,
+        "Firma AE delle voci e inserimento nel Bulletin Board"
+    )
+
+    # ──────────────────────────────────────────────
+    # COSTRUZIONE MERKLE TREE
+    # ──────────────────────────────────────────────
+
+    start = time.perf_counter()
+    root = bulletin_board.get_merkle_root()
+    end = time.perf_counter()
+
+    add_result(
+        results,
+        "Scenario universitario: Merkle Tree 28000 schede",
+        1,
+        (end - start) * 1000,
+        0.0,
+        len(root),
+        "Costruzione Merkle Tree sul Bulletin Board completo"
+    )
+
+    # ──────────────────────────────────────────────
+    # VERIFICA MERKLE PROOF
+    # ──────────────────────────────────────────────
+
+    proof_index = number_of_votes // 2
+    proof = bulletin_board.get_proof(proof_index)
+    entry = bulletin_board.serialize_entry(proof_index)
+
+    start = time.perf_counter()
+    proof_valid = verify_proof(entry, proof_index, proof, root)
+    end = time.perf_counter()
+
+    add_result(
+        results,
+        "Scenario universitario: verifica Merkle proof",
+        1,
+        (end - start) * 1000,
+        0.0,
+        1,
+        f"Proof valida: {proof_valid}"
+    )
+
+    # ──────────────────────────────────────────────
+    # SCRUTINIO DI 28.000 VOTI
+    # ──────────────────────────────────────────────
+
+    electoral_authority.close_election()
+
+    start = time.perf_counter()
+    signed_results = electoral_authority.tally_votes(candidates)
+    end = time.perf_counter()
+
+    add_result(
+        results,
+        "Scenario universitario: scrutinio 28000 voti",
+        1,
+        (end - start) * 1000,
+        0.0,
+        len(serialize(signed_results)),
+        "Decifrazione RSA-OAEP e conteggio di tutte le schede"
+    )
 
 def save_results(results: list[dict]) -> None:
     """Salva i risultati del benchmark in formato CSV."""
@@ -382,6 +524,7 @@ def main() -> None:
     benchmark_crypto_operations(results)
     benchmark_merkle_tree(results)
     benchmark_protocol_operations(results)
+    benchmark_university_scenario(results)
 
     save_results(results)
     print_results(results)

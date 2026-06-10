@@ -215,8 +215,8 @@ class ElectionSimulation:
         """
         self.cast_votes(votes)
 
-        individual_checks = self.verify_individual_checks()
         final_data = self.close_and_tally()
+        individual_checks = self.verify_individual_checks()
         universal_check = self.verify_universal_check()
 
         return {

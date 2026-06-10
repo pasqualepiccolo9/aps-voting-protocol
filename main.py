@@ -12,7 +12,7 @@ def main() -> None:
     Esegue una simulazione completa del protocollo.
 
     Questo script serve come esempio di esecuzione da mostrare nel WP4:
-    registrazione, voto, verifica individuale, chiusura, scrutinio
+    registrazione, voto, chiusura, verifica individuale, scrutinio
     e verifica universale.
     """
 
@@ -66,9 +66,14 @@ def main() -> None:
     close_message = simulation.electoral_authority.close_election()
     simulation.close_message = close_message
 
+    print("[AE] Messaggio di chiusura pubblicato")
+    print(f"     root_B      = {close_message['root_B']}")
+    print(f"     m           = {close_message['m']}")
+    print(f"     sigma_close = {close_message['sigma_close'][:40]}...")
+
     print_separator()
 
-    print("[Verifica individuale] Controllo ricevute e inclusione nel Bulletin Board")
+    print("[Verifica individuale] Controllo ricevute e inclusione nel Bulletin Board chiuso")
     individual_checks = simulation.verify_individual_checks()
 
     for voter_id, result in individual_checks.items():
