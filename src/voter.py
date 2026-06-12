@@ -9,6 +9,8 @@ from src.crypto_utils import (
     generate_rsa_keys,
     encrypt_oaep,
     hash_sha256,
+    sign,
+    serialize,
     verify_signature,
     pubkey_to_bytes
 )
@@ -34,6 +36,8 @@ class Voter:
 
         self.token: Optional[str] = None
         self.signed_token: Optional[dict] = None
+        self.auth_challenge: Optional[str] = None
+        self.challenge_signature: Optional[bytes] = None
 
         self.ballot_id: Optional[str] = None
         self.ciphertext: Optional[bytes] = None
@@ -67,7 +71,7 @@ class Voter:
 
     def request_signed_token(self, auth_server) -> dict:
         """
-        Richiede al Sistema di Autenticazione la firma del token.
+        Esegue il challenge-response e richiede la firma del token.
 
         Il SA conosce voter_id, ma il token firmato che verrà presentato
         all'Autorità Elettorale non contiene l'identità reale dell'elettore.
@@ -75,7 +79,44 @@ class Voter:
         if self.token is None:
             self.generate_token()
 
-        self.signed_token = auth_server.issue_token(self.voter_id, self.token)
+        nonce = self.request_auth_challenge(auth_server)
+        challenge_signature = self.sign_auth_challenge(nonce)
+        self.signed_token = auth_server.verify_challenge_and_issue_token(
+            voter_id=self.voter_id,
+            token=self.token,
+            challenge_signature=challenge_signature
+        )
+        return self.signed_token
+
+    def request_auth_challenge(self, auth_server) -> str:
+        """Richiede al SA un nonce monouso per l'autenticazione."""
+        self.auth_challenge = auth_server.create_challenge(self.voter_id)
+        self.challenge_signature = None
+        return self.auth_challenge
+
+    def sign_auth_challenge(self, nonce: str) -> bytes:
+        """Firma il challenge usando la chiave privata dell'elettore."""
+        challenge_message = serialize({
+            "type": "AUTH_CHALLENGE",
+            "voter_id": self.voter_id,
+            "nonce": nonce
+        })
+        self.challenge_signature = sign(self.private_key, challenge_message)
+        return self.challenge_signature
+
+    def submit_auth_challenge(self, auth_server) -> dict:
+        """Invia al SA la firma del challenge e riceve il token firmato."""
+        if self.token is None:
+            self.generate_token()
+
+        if self.challenge_signature is None:
+            raise ValueError("Challenge non firmato.")
+
+        self.signed_token = auth_server.verify_challenge_and_issue_token(
+            voter_id=self.voter_id,
+            token=self.token,
+            challenge_signature=self.challenge_signature
+        )
         return self.signed_token
 
     # ──────────────────────────────────────────────

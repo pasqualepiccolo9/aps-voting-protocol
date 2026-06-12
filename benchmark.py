@@ -245,9 +245,7 @@ def benchmark_protocol_operations(results: list[dict]) -> None:
     voter = Voter("E01")
     auth_server.register_voter("E01", voter.get_public_key())
 
-    token = voter.generate_token()
-
-    signed_token = auth_server.issue_token("E01", token)
+    signed_token = voter.request_signed_token(auth_server)
 
     mean_ms, std_ms = measure_operation(
         lambda: auth_server.verify_token(signed_token),
@@ -294,7 +292,7 @@ def benchmark_protocol_operations(results: list[dict]) -> None:
         mean_ms,
         std_ms,
         0,
-        "Registrazione elettore, token, cifratura, verifica AE e inserimento nel Bulletin Board"
+        "Registrazione, challenge-response, token, cifratura, verifica AE e Bulletin Board"
     )
 
     # Scrutinio su un insieme separato di voti.

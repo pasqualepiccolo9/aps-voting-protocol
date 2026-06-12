@@ -2,42 +2,57 @@
 [SA] Registrazione elettori aventi diritto
 ----------------------------------------------------------------------
 [Voto] Avvio fase di voto
-[Elettore E01] Richiesta token firmato al SA
+[Elettore E01] Richiesta challenge al Sistema di Autenticazione
+[SA] Challenge generato per E01 (6a985e55d6cc...)
+[Elettore E01] Challenge firmato
+[SA] Challenge verificato: token emesso
 [Elettore E01] Cifratura voto con RSA-OAEP
 [AE] Verifica token e registrazione scheda
 [AE] Ricevuta generata per E01
      index = 0
-     id    = ballot_f4aef7b892d04dd6b5b947896be2ca57
-[Elettore E02] Richiesta token firmato al SA
+     id    = ballot_1bd9091f194694fe8f16f1551a4b4440
+[Elettore E02] Richiesta challenge al Sistema di Autenticazione
+[SA] Challenge generato per E02 (7372f1c7fa5d...)
+[Elettore E02] Challenge firmato
+[SA] Challenge verificato: token emesso
 [Elettore E02] Cifratura voto con RSA-OAEP
 [AE] Verifica token e registrazione scheda
 [AE] Ricevuta generata per E02
      index = 1
-     id    = ballot_7de97a1ab9ac8e988c82066294b92aee
-[Elettore E03] Richiesta token firmato al SA
+     id    = ballot_86af70242052f3b595fd486fd0514206
+[Elettore E03] Richiesta challenge al Sistema di Autenticazione
+[SA] Challenge generato per E03 (c34d1c02c333...)
+[Elettore E03] Challenge firmato
+[SA] Challenge verificato: token emesso
 [Elettore E03] Cifratura voto con RSA-OAEP
 [AE] Verifica token e registrazione scheda
 [AE] Ricevuta generata per E03
      index = 2
-     id    = ballot_ce8f0b4549d4ce518764f588bfcc7a5d
-[Elettore E04] Richiesta token firmato al SA
+     id    = ballot_374bad968ec379c0815e98fa6c1cdf3e
+[Elettore E04] Richiesta challenge al Sistema di Autenticazione
+[SA] Challenge generato per E04 (f7466cdd3df5...)
+[Elettore E04] Challenge firmato
+[SA] Challenge verificato: token emesso
 [Elettore E04] Cifratura voto con RSA-OAEP
 [AE] Verifica token e registrazione scheda
 [AE] Ricevuta generata per E04
      index = 3
-     id    = ballot_5467b336c59469326deb42575859f65f
-[Elettore E05] Richiesta token firmato al SA
+     id    = ballot_3fe18d9f24a078ba56f424935cf4cb6e
+[Elettore E05] Richiesta challenge al Sistema di Autenticazione
+[SA] Challenge generato per E05 (d72ef22ee675...)
+[Elettore E05] Challenge firmato
+[SA] Challenge verificato: token emesso
 [Elettore E05] Cifratura voto con RSA-OAEP
 [AE] Verifica token e registrazione scheda
 [AE] Ricevuta generata per E05
      index = 4
-     id    = ballot_16a80a08698f9644d235928ce74416e4
+     id    = ballot_c73244d0d7133d9aa9fa056c729745ef
 ----------------------------------------------------------------------
 [AE] Chiusura urne
 [AE] Messaggio di chiusura pubblicato
-     root_B      = a3f10ed31b4058a192c3e38cd3f93b68994225b5c55709bffcdf77fe2c5ef48d
+     root_B      = d03334f869ed61b3b95290e7ad2aaf033f523f8bd7bb67b89073e8f92bcc2fac
      m           = 5
-     sigma_close = 42fcb4fa35d3e4b691c11a5bdb9cf6cede4938e8...
+     sigma_close = 14e7d47a74cf558fbc926f84da601319e8a5c08f...
 ----------------------------------------------------------------------
 [Verifica individuale] Controllo ricevute e inclusione nel Bulletin Board chiuso
 [Elettore E01] Verifica individuale: OK
@@ -52,32 +67,32 @@
      Candidato B: 1
      Candidato C: 1
      NULL: 0
-     root_B: a3f10ed31b4058a192c3e38cd3f93b68994225b5c55709bffcdf77fe2c5ef48d
-     sigma_R: 5349833376050f207ed7b9b74064013e4ec9cecc...
+     root_B: d03334f869ed61b3b95290e7ad2aaf033f523f8bd7bb67b89073e8f92bcc2fac
+     sigma_R: 385e51037a378bb3f81982e646f9884dba6683ae...
 ----------------------------------------------------------------------
 [Verificatore Pubblico] Verifica universale
 [Verificatore Pubblico] Verifica universale: OK
 ----------------------------------------------------------------------
 [Bulletin Board] Voci pubblicate
 Voce 0:
-     id         = ballot_f4aef7b892d04dd6b5b947896be2ca57
-     ciphertext = 1dfc795468cb9e8aa3f9bbb43be25d6c4bfdbccd...
-     signature  = 21074073f4e4d709ceb18f0f22c0716e4b194a1c...
+     id         = ballot_1bd9091f194694fe8f16f1551a4b4440
+     ciphertext = 9e99f321aeabbff205961c704eb2fdfb9e37abb8...
+     signature  = 102c71cfc8f7c5d39a1984b82adcb3d09def9e13...
 Voce 1:
-     id         = ballot_7de97a1ab9ac8e988c82066294b92aee
-     ciphertext = 1941e89f81002fd9fcc57bfeb82556c1ae2579ce...
-     signature  = bf8245e9222cdce888cd19b962101d7b268facbf...
+     id         = ballot_86af70242052f3b595fd486fd0514206
+     ciphertext = 98b43f172ea61ad5f54e36482d0ab3d01ef05726...
+     signature  = 9863f9f8bcbbea06d941ba1afef8353d6055b106...
 Voce 2:
-     id         = ballot_ce8f0b4549d4ce518764f588bfcc7a5d
-     ciphertext = 45fb67eb5d5620fd933378cabb50a8ff16ca2dbd...
-     signature  = 55753ecbf101ac87a8ef74f2221f941f8d809b1e...
+     id         = ballot_374bad968ec379c0815e98fa6c1cdf3e
+     ciphertext = 53a964012c255872597b9eb2d4f33f78ecc1a51e...
+     signature  = 486c8b117ddd3deae4e01c340b4f81e7be13d694...
 Voce 3:
-     id         = ballot_5467b336c59469326deb42575859f65f
-     ciphertext = 60f328cab07d9919795a152df7248fab7eda38cb...
-     signature  = 86f94919e5fc46870ef60bca0e9e2d2b8f20b13b...
+     id         = ballot_3fe18d9f24a078ba56f424935cf4cb6e
+     ciphertext = 2bfa1bb0f20394611011f13d3b40f5ab5a2e882b...
+     signature  = 42191dc0ae980fc5dbe1bf723451a7fece2cda73...
 Voce 4:
-     id         = ballot_16a80a08698f9644d235928ce74416e4
-     ciphertext = 994d493ef4cb089ccf053bb4ed1d7d3fccd155c2...
-     signature  = 27ba6ea69b774da7095cbd5a67de0bbf07d7d286...
+     id         = ballot_c73244d0d7133d9aa9fa056c729745ef
+     ciphertext = 16c5686f74ce0a32e085b419d36738cf909c4caa...
+     signature  = 0ae23bb30e4e39b74b573ebef335ecd2e76fa622...
 ----------------------------------------------------------------------
 [Fine simulazione]

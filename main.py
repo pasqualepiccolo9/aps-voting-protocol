@@ -52,7 +52,15 @@ def main() -> None:
     for voter_id, vote in votes.items():
         voter = simulation.get_voter_by_id(voter_id)
 
-        print(f"[Elettore {voter_id}] Richiesta token firmato al SA")
+        print(f"[Elettore {voter_id}] Richiesta challenge al Sistema di Autenticazione")
+        nonce = voter.request_auth_challenge(simulation.auth_server)
+        print(f"[SA] Challenge generato per {voter_id} ({nonce[:12]}...)")
+
+        voter.sign_auth_challenge(nonce)
+        print(f"[Elettore {voter_id}] Challenge firmato")
+
+        voter.submit_auth_challenge(simulation.auth_server)
+        print("[SA] Challenge verificato: token emesso")
         print(f"[Elettore {voter_id}] Cifratura voto con RSA-OAEP")
         print(f"[AE] Verifica token e registrazione scheda")
 

@@ -82,13 +82,17 @@ class ElectionSimulation:
     # FASE DI VOTO
     # ──────────────────────────────────────────────
 
+    def authenticate_voter(self, voter: Voter) -> dict:
+        """Autentica l'elettore tramite challenge-response ed emette il token."""
+        return voter.request_signed_token(self.auth_server)
+
     def cast_vote(self, voter: Voter, vote: str) -> dict:
         """
         Simula il voto di un singolo elettore.
 
         Passaggi:
-        1. l'elettore genera un token pseudonimo;
-        2. il SA firma il token;
+        1. l'elettore completa il challenge-response con il SA;
+        2. il SA emette il token firmato;
         3. l'elettore cifra il voto con la chiave pubblica dell'AE;
         4. l'AE verifica il token, registra la scheda e produce una ricevuta;
         5. l'elettore conserva la ricevuta.
@@ -96,7 +100,8 @@ class ElectionSimulation:
         if vote not in self.candidates:
             raise ValueError("Candidato non valido.")
 
-        voter.request_signed_token(self.auth_server)
+        if voter.signed_token is None:
+            self.authenticate_voter(voter)
 
         ballot_packet = voter.prepare_ballot_packet(
             vote=vote,

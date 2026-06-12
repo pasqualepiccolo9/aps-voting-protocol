@@ -1,4 +1,4 @@
-# src/auth_server.py
+import secrets
 
 from cryptography.hazmat.primitives.asymmetric.rsa import RSAPublicKey
 
@@ -7,6 +7,7 @@ from src.crypto_utils import (
     sign,
     verify_signature,
     hash_sha256,
+    serialize,
     pubkey_to_bytes
 )
 
@@ -29,6 +30,7 @@ class AuthServer:
 
         self.eligible_voters: dict[str, RSAPublicKey] = {}
         self.issued_tokens: dict[str, dict] = {}
+        self.pending_challenges: dict[str, str] = {}
 
     # ──────────────────────────────────────────────
     # REGISTRAZIONE ELETTORI
@@ -52,12 +54,29 @@ class AuthServer:
         return voter_id in self.eligible_voters
 
     # ──────────────────────────────────────────────
-    # FIRMA DEL TOKEN
+    # AUTENTICAZIONE CHALLENGE-RESPONSE
     # ──────────────────────────────────────────────
 
-    def issue_token(self, voter_id: str, token: str) -> dict:
+    def create_challenge(self, voter_id: str) -> str:
+        """Genera un nonce monouso per un elettore registrato."""
+        if voter_id not in self.eligible_voters:
+            raise ValueError("Elettore non avente diritto.")
+
+        if voter_id in self.issued_tokens:
+            raise ValueError("Token già emesso per questo elettore.")
+
+        nonce = secrets.token_hex(32)
+        self.pending_challenges[voter_id] = nonce
+        return nonce
+
+    def verify_challenge_and_issue_token(
+        self,
+        voter_id: str,
+        token: str,
+        challenge_signature: bytes
+    ) -> dict:
         """
-        Firma un token pseudonimo generato dall'elettore.
+        Verifica la prova di possesso della chiave privata e firma il token.
 
         Il SA non inserisce l'identità reale dell'elettore nel token firmato.
         Registra però internamente che quell'elettore ha già ricevuto
@@ -66,9 +85,31 @@ class AuthServer:
         if voter_id not in self.eligible_voters:
             raise ValueError("Elettore non avente diritto.")
 
+        nonce = self.pending_challenges.pop(voter_id, None)
+        if nonce is None:
+            raise ValueError("Challenge assente, scaduto o già utilizzato.")
+
+        challenge_message = serialize({
+            "type": "AUTH_CHALLENGE",
+            "voter_id": voter_id,
+            "nonce": nonce
+        })
+
+        voter_public_key = self.eligible_voters[voter_id]
+        if not verify_signature(
+            voter_public_key,
+            challenge_message,
+            challenge_signature
+        ):
+            raise ValueError("Firma del challenge non valida.")
+
         if voter_id in self.issued_tokens:
             raise ValueError("Token già emesso per questo elettore.")
 
+        return self._issue_token(voter_id, token)
+
+    def _issue_token(self, voter_id: str, token: str) -> dict:
+        """Firma il token dopo che il challenge è stato verificato."""
         token_hash = hash_sha256(token.encode("utf-8"))
         token_signature = sign(self.private_key, token_hash)
 
