@@ -1,0 +1,83 @@
+[Setup] Inizializzazione simulazione
+[SA] Registrazione elettori aventi diritto
+----------------------------------------------------------------------
+[Voto] Avvio fase di voto
+[Elettore E01] Richiesta token firmato al SA
+[Elettore E01] Cifratura voto con RSA-OAEP
+[AE] Verifica token e registrazione scheda
+[AE] Ricevuta generata per E01
+     index = 0
+     id    = ballot_f4aef7b892d04dd6b5b947896be2ca57
+[Elettore E02] Richiesta token firmato al SA
+[Elettore E02] Cifratura voto con RSA-OAEP
+[AE] Verifica token e registrazione scheda
+[AE] Ricevuta generata per E02
+     index = 1
+     id    = ballot_7de97a1ab9ac8e988c82066294b92aee
+[Elettore E03] Richiesta token firmato al SA
+[Elettore E03] Cifratura voto con RSA-OAEP
+[AE] Verifica token e registrazione scheda
+[AE] Ricevuta generata per E03
+     index = 2
+     id    = ballot_ce8f0b4549d4ce518764f588bfcc7a5d
+[Elettore E04] Richiesta token firmato al SA
+[Elettore E04] Cifratura voto con RSA-OAEP
+[AE] Verifica token e registrazione scheda
+[AE] Ricevuta generata per E04
+     index = 3
+     id    = ballot_5467b336c59469326deb42575859f65f
+[Elettore E05] Richiesta token firmato al SA
+[Elettore E05] Cifratura voto con RSA-OAEP
+[AE] Verifica token e registrazione scheda
+[AE] Ricevuta generata per E05
+     index = 4
+     id    = ballot_16a80a08698f9644d235928ce74416e4
+----------------------------------------------------------------------
+[AE] Chiusura urne
+[AE] Messaggio di chiusura pubblicato
+     root_B      = a3f10ed31b4058a192c3e38cd3f93b68994225b5c55709bffcdf77fe2c5ef48d
+     m           = 5
+     sigma_close = 42fcb4fa35d3e4b691c11a5bdb9cf6cede4938e8...
+----------------------------------------------------------------------
+[Verifica individuale] Controllo ricevute e inclusione nel Bulletin Board chiuso
+[Elettore E01] Verifica individuale: OK
+[Elettore E02] Verifica individuale: OK
+[Elettore E03] Verifica individuale: OK
+[Elettore E04] Verifica individuale: OK
+[Elettore E05] Verifica individuale: OK
+----------------------------------------------------------------------
+[AE] Scrutinio
+[AE] Risultato finale firmato
+     Candidato A: 3
+     Candidato B: 1
+     Candidato C: 1
+     NULL: 0
+     root_B: a3f10ed31b4058a192c3e38cd3f93b68994225b5c55709bffcdf77fe2c5ef48d
+     sigma_R: 5349833376050f207ed7b9b74064013e4ec9cecc...
+----------------------------------------------------------------------
+[Verificatore Pubblico] Verifica universale
+[Verificatore Pubblico] Verifica universale: OK
+----------------------------------------------------------------------
+[Bulletin Board] Voci pubblicate
+Voce 0:
+     id         = ballot_f4aef7b892d04dd6b5b947896be2ca57
+     ciphertext = 1dfc795468cb9e8aa3f9bbb43be25d6c4bfdbccd...
+     signature  = 21074073f4e4d709ceb18f0f22c0716e4b194a1c...
+Voce 1:
+     id         = ballot_7de97a1ab9ac8e988c82066294b92aee
+     ciphertext = 1941e89f81002fd9fcc57bfeb82556c1ae2579ce...
+     signature  = bf8245e9222cdce888cd19b962101d7b268facbf...
+Voce 2:
+     id         = ballot_ce8f0b4549d4ce518764f588bfcc7a5d
+     ciphertext = 45fb67eb5d5620fd933378cabb50a8ff16ca2dbd...
+     signature  = 55753ecbf101ac87a8ef74f2221f941f8d809b1e...
+Voce 3:
+     id         = ballot_5467b336c59469326deb42575859f65f
+     ciphertext = 60f328cab07d9919795a152df7248fab7eda38cb...
+     signature  = 86f94919e5fc46870ef60bca0e9e2d2b8f20b13b...
+Voce 4:
+     id         = ballot_16a80a08698f9644d235928ce74416e4
+     ciphertext = 994d493ef4cb089ccf053bb4ed1d7d3fccd155c2...
+     signature  = 27ba6ea69b774da7095cbd5a67de0bbf07d7d286...
+----------------------------------------------------------------------
+[Fine simulazione]

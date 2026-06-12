@@ -1,4 +1,6 @@
 # main.py
+import sys
+from pathlib import Path
 
 from src.election_simulation import ElectionSimulation
 
@@ -119,4 +121,16 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    output_dir = Path("outputs")
+    output_dir.mkdir(exist_ok=True)
+
+    output_file = output_dir / "sample_run.txt"
+
+    with output_file.open("w", encoding="utf-8") as file:
+        original_stdout = sys.stdout
+        sys.stdout = file
+
+        try:
+            main()
+        finally:
+            sys.stdout = original_stdout
